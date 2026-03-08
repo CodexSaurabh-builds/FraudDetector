@@ -98,7 +98,7 @@ const transactionLine =
 ${transaction.timestamp},${transaction.id},${transaction.recipientAccount},${transaction.type.toUpperCase()},${transaction.amount},${transaction.city},127.0.0.1
 
 // Send transaction to Java fraud detection system
-await fetch("https://YOUR-NGROK-URL/transaction", {
+await fetch("https://fulsome-serena-resistively.ngrok-free.dev", {
   method: "POST",
   headers: {
     "Content-Type": "text/plain"
