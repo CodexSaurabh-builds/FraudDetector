@@ -93,6 +93,18 @@ export function SendMoneyForm() {
       state: selectedState,
       city: selectedCity,
     }
+    // Create line for fraud detection system
+const transactionLine =
+${transaction.timestamp},${transaction.id},${transaction.recipientAccount},${transaction.type.toUpperCase()},${transaction.amount},${transaction.city},127.0.0.1
+
+// Send transaction to Java fraud detection system
+await fetch("https://YOUR-NGROK-URL/transaction", {
+  method: "POST",
+  headers: {
+    "Content-Type": "text/plain"
+  },
+  body: transactionLine
+})
     
     addTransaction(transaction)
     setSubmittedTransaction(transaction)
