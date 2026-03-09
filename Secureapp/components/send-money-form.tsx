@@ -93,18 +93,6 @@ export function SendMoneyForm() {
       state: selectedState,
       city: selectedCity,
     }
-    // Create line for fraud detection system
-const transactionLine =
-${transaction.timestamp},${transaction.id},${transaction.recipientAccount},${transaction.type.toUpperCase()},${transaction.amount},${transaction.city},127.0.0.1
-
-// Send transaction to Java fraud detection system
-await fetch("https://fulsome-serena-resistively.ngrok-free.dev", {
-  method: "POST",
-  headers: {
-    "Content-Type": "text/plain"
-  },
-  body: transactionLine
-})
     
     addTransaction(transaction)
     setSubmittedTransaction(transaction)
@@ -123,45 +111,58 @@ await fetch("https://fulsome-serena-resistively.ngrok-free.dev", {
     setErrors({})
   }
 
-  if (success && submittedTransaction) {
-    return (
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <CheckCircle2 className="h-8 w-8 text-green-600" />
-          </div>
-          <CardTitle className="text-xl">Transaction Submitted</CardTitle>
-          <CardDescription>Your payment has been processed successfully</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="rounded-lg bg-muted p-4">
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Transaction ID</span>
-                <span className="font-mono text-sm font-medium">{submittedTransaction.id}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Date & Time</span>
-                <span className="font-medium">{submittedTransaction.date} at {submittedTransaction.time}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Amount</span>
-                <span className="font-medium">Rs. {submittedTransaction.amount.toFixed(2)}</span>
-              </div>
+if (success && submittedTransaction) {
+  return (
+    <Card className="w-full max-w-md shadow-lg">
+      <CardHeader className="text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+          <CheckCircle2 className="h-8 w-8 text-green-600" />
+        </div>
+        <CardTitle className="text-xl">Transaction Submitted</CardTitle>
+        <CardDescription>
+          Your payment has been processed successfully
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent className="space-y-6">
+        <div className="rounded-lg bg-muted p-4">
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Transaction ID</span>
+              <span className="font-mono text-sm font-medium">
+                {submittedTransaction.id}
+              </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Date & Time</span>
+              <span className="font-medium">
+                {submittedTransaction.date} at {submittedTransaction.time}
+              </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Amount</span>
+              <span className="font-medium">
+                Rs. {submittedTransaction.amount.toFixed(2)}
+              </span>
             </div>
           </div>
-          <div className="flex flex-col gap-3">
-            <Button onClick={handleNewTransaction} className="w-full">
-              Send Another Payment
-            </Button>
-            <Button variant="outline" asChild className="w-full">
-              <Link href="/history">View Transaction History</Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <Button onClick={handleNewTransaction} className="w-full">
+            Send Another Payment
+          </Button>
+
+          <Button variant="outline" asChild className="w-full">
+            <Link href="/history">View Transaction History</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
   return (
     <Card className="w-full max-w-md shadow-lg">
@@ -189,7 +190,7 @@ await fetch("https://fulsome-serena-resistively.ngrok-free.dev", {
                 type="text"
                 placeholder="e.g. acc501"
                 value={recipientAccount}
-                onChange={(e) => setRecipientAccount(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRecipientAccount(e.target.value)}
                 aria-invalid={!!errors.recipientAccount}
               />
               {errors.recipientAccount && <FieldError>{errors.recipientAccount}</FieldError>}
@@ -197,7 +198,7 @@ await fetch("https://fulsome-serena-resistively.ngrok-free.dev", {
             
             <Field>
               <FieldLabel htmlFor="transactionType">Transaction Type</FieldLabel>
-              <Select value={transactionType} onValueChange={(value) => setTransactionType(value as 'Debit' | 'Credit')}>
+              <Select value={transactionType} onValueChange={(value: string) => setTransactionType(value as 'Debit' | 'Credit')}>
                 <SelectTrigger id="transactionType" className="w-full" aria-invalid={!!errors.transactionType}>
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
@@ -218,7 +219,7 @@ await fetch("https://fulsome-serena-resistively.ngrok-free.dev", {
                 min="0.01"
                 step="0.01"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAmount(e.target.value)}
                 aria-invalid={!!errors.amount}
               />
               {errors.amount && <FieldError>{errors.amount}</FieldError>}
