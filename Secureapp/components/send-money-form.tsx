@@ -71,34 +71,43 @@ export function SendMoneyForm() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!validate()) return
-    
-    setIsLoading(true)
-    
-    // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    const now = new Date()
-    const transaction: Transaction = {
-      id: generateTransactionId(),
-      timestamp: Math.floor(now.getTime() / 1000), // Epoch format for backend
-      date: now.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }),
-      time: now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
-      recipientAccount,
-      amount: parseFloat(amount),
-      type: transactionType as 'Debit' | 'Credit',
-      state: selectedState,
-      city: selectedCity,
-    }
-    
-    addTransaction(transaction)
-    setSubmittedTransaction(transaction)
-    setSuccess(true)
-    setIsLoading(false)
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+
+  if (!validate()) return
+
+  setIsLoading(true)
+
+  // Simulate processing delay
+  await new Promise(resolve => setTimeout(resolve, 2000))
+
+  const now = new Date()
+  const transaction: Transaction = {
+    id: generateTransactionId(),
+    timestamp: Math.floor(now.getTime() / 1000),
+    date: now.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }),
+    time: now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+    recipientAccount,
+    amount: parseFloat(amount),
+    type: transactionType as 'Debit' | 'Credit',
+    state: selectedState,
+    city: selectedCity,
   }
+
+  // Send to Java backend via ngrok
+  await fetch("https://YOUR_NGROK_LINK.ngrok-free.app/transaction", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(transaction),
+  })
+
+  addTransaction(transaction)
+  setSubmittedTransaction(transaction)
+  setSuccess(true)
+  setIsLoading(false)
+}
 
   const handleNewTransaction = () => {
     setRecipientAccount('')
